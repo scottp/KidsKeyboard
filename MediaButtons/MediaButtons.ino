@@ -1,5 +1,14 @@
 
-/* Buttons to USB Keyboard Example - Special Media Player Keys
+/* 
+ Kids Keyboard - Scott Penrose (c) 2012
+ http://scott.dd.com.au/
+ https://github.com/scottp/KidsKeyboard
+ 
+ Versions:
+ 2012-05-05 Initial release
+ 2012-05-06 Better buttons
+ 
+ Buttons to USB Keyboard Example - Special Media Player Keys
  
  You must select Keyboard from the "Tools > USB Type" menu
  
@@ -10,27 +19,27 @@
  2    right
  3    down
  
- 15     Blue       Back
- 21	Yellow     X (Exit)
+ 15     Blue       Back and X
+ 21	Yellow     (spare)
  14	Green      Volume up 
  20	Black      RUN Boxee
  18	Pink       RUN Plex
  13	White      Volume down
  16	Aqua       OK/Go
- 17	L green    OK/Go
+ 17	L green    (spare)
  19	Red        Space (starrt/stop)
-
-TODO
-	- Combine Back (ESC) and Yellow (X)
-	- Make sure (some how) Boxee goes full screen
-	- How to jump to things in Plex - e.g. ABC for Kids
-	- How to jump to things in Boxee - e.g. My little pony
-
-Multiple Modes
-	- Switch / Button input to change mode
-	- Modes e.g.
-	  	. TV
-		. Game XYZ
+ 
+ TODO
+ 	- Combine Back (ESC) and Yellow (X)
+ 	- Make sure (some how) Boxee goes full screen
+ 	- How to jump to things in Plex - e.g. ABC for Kids
+ 	- How to jump to things in Boxee - e.g. My little pony
+ 
+ Multiple Modes
+ 	- Switch / Button input to change mode
+ 	- Modes e.g.
+ 	  	. TV
+ 		. Game XYZ
  
  */
 
@@ -68,13 +77,16 @@ void setup() {
   pinMode(13, INPUT_PULLUP);
 }
 
+bool joystickActive = false;      // Prevent Left & Up operating together (kids getting confused)
 void loop() {
 
+  // Joystick
   buttonLEFT.update();
   buttonUP.update();
   buttonRIGHT.update();
   buttonDOWN.update();
 
+  // Buttons
   button_Blue.update();
   button_Yellow.update();
   button_Green.update();
@@ -85,23 +97,30 @@ void loop() {
   button_LGreen.update();
   button_Red.update();
 
-  // Long press
+  // Long press - e.g. click and hold joystick
 
-  if (buttonLEFT.fallingEdge()) {
-    Keyboard.set_key1(KEY_LEFT);
-    Keyboard.send_now();	// send the button press
-  }
-  if (buttonRIGHT.fallingEdge()) {
-    Keyboard.set_key1(KEY_RIGHT);
-    Keyboard.send_now();	// send the button press
-  }
-  if (buttonUP.fallingEdge()) {
-    Keyboard.set_key1(KEY_UP);
-    Keyboard.send_now();	// send the button press
-  }
-  if (buttonDOWN.fallingEdge()) {
-    Keyboard.set_key1(KEY_DOWN);
-    Keyboard.send_now();	// send the button press
+  if (! joystickActive) {
+    // Prevent two at once, by using active, and usin 'else' to check
+    if (buttonLEFT.fallingEdge()) {
+      Keyboard.set_key1(KEY_LEFT);
+      Keyboard.send_now();	// send the button press
+      joystickActive = true;
+    }
+    else if (buttonRIGHT.fallingEdge()) {
+      Keyboard.set_key1(KEY_RIGHT);
+      Keyboard.send_now();	// send the button press
+      joystickActive = true;
+    }
+    else if (buttonUP.fallingEdge()) {
+      Keyboard.set_key1(KEY_UP);
+      Keyboard.send_now();	// send the button press
+      joystickActive = true;
+    }
+    else if (buttonDOWN.fallingEdge()) {
+      Keyboard.set_key1(KEY_DOWN);
+      Keyboard.send_now();	// send the button press
+      joystickActive = true;
+    }
   }
 
   if (
@@ -112,6 +131,7 @@ void loop() {
     ) {
     Keyboard.set_key1(0);
     Keyboard.send_now();	// send the button press
+    joystickActive = false;
   }
 
   // Single Press
@@ -136,12 +156,13 @@ void loop() {
     Keyboard.send_now();	// send the button press
     Keyboard.set_key1(0);
     Keyboard.send_now();	// send the button release
-  }
-  if (button_Yellow.fallingEdge()) {
     Keyboard.set_key1(KEY_X);
     Keyboard.send_now();	// send the button press
     Keyboard.set_key1(0);
     Keyboard.send_now();	// send the button release
+  }
+
+  if (button_Yellow.fallingEdge()) {
   }
 
   // Play/Pause
@@ -178,44 +199,8 @@ void loop() {
     Keyboard.send_now();	// send the button release
   }
 
-  //    20	Black      RUN Boxee
-  //    18	Pink       RUN Plex
-
-  /*
-   if (button1.fallingEdge()) {
-   Keyboard.set_media(KEY_MEDIA_PLAY_PAUSE);
-   Keyboard.send_now();
-   Keyboard.set_media(0);
-   Keyboard.send_now();
-   }
-   if (button2.fallingEdge()) {
-   Keyboard.set_media(KEY_MEDIA_NEXT_TRACK);
-   Keyboard.send_now();   
-   Keyboard.set_media(0);
-   Keyboard.send_now();
-   }
-   if (button3.fallingEdge()) {
-   Keyboard.set_media(KEY_MEDIA_VOLUME_DEC);
-   Keyboard.send_now();
-   Keyboard.set_media(0);
-   Keyboard.send_now();
-   }
-   if (button4.fallingEdge()) {
-   Keyboard.set_media(KEY_MEDIA_VOLUME_INC);
-   Keyboard.send_now();
-   Keyboard.set_media(0);
-   Keyboard.send_now();
-   }
-   if (button5.fallingEdge()) {
-   Keyboard.set_media(KEY_MEDIA_EJECT);
-   Keyboard.send_now();
-   delay(300);  // Mac OS-X will not recognize a very short eject press
-   Keyboard.set_media(0);
-   Keyboard.send_now();
-   }
-   */
-
 }
+
 
 
 

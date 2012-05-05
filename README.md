@@ -1,6 +1,8 @@
 KidsKeyboard
 ============
 
+Web site - http://scott.dd.com.au/wiki/Kids_Keyboard
+
 Kids keyboard for controlling Media Centre - rugged and easy to use.
 
 I have two versions. The Arduino (Teensyduino) version which is working now in
